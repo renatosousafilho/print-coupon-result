@@ -5,6 +5,7 @@ import {PrintImageProvider} from '../../providers/print/print_image';
 import {PrinterListModalPage} from '../printer-list-modal/printer-list-modal';
 // import { InAppBrowser } from 'ionic-native';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import * as html2canvas from 'html2canvas';
 
 
 
@@ -18,6 +19,7 @@ export class HomePage {
   constructor(public navCtrl: NavController,private modalCtrl:ModalController,
     private printImageProvider: PrintImageProvider,
     private alertCtrl:AlertController, private platform:Platform) {
+      this.openUrl();
   }
 
   openUrl() {
@@ -51,9 +53,19 @@ export class HomePage {
   printSomething() {
     this.printImageProvider.listBluetoothDevices().then(result => {
       this.printImageProvider.connect(result[1].address).then(result => {
-        this.printImageProvider.printText('Some text - Result');
-        this.printImageProvider.printText('Some text - Result');
-        this.printImageProvider.printText('Some text - Result');
+
+        // this.printImageProvider.printText('Some text - Result');
+        // this.printImageProvider.printText('Some text - Result');
+        // this.printImageProvider.printText('Some text - Result');
+        setTimeout(()=>{
+          this.printCoupon();
+        }, 3000)
+        // setTimeout(function(){
+        //   console.log("teste");
+        //   this.printImageProvider.printText('Some text - Result\n');
+        //   this.printImageProvider.printText('Some text - Result');
+        //   // $self.printCoupon();
+        // }, 10000);
         // this.printImageProvider.printText('Some text - Result').then(
         //   () => {console.log('it works')},
         //   err => {console.log('error when  print: ' + err)}
@@ -67,12 +79,7 @@ export class HomePage {
   printImage(imageBase, canvas) {
     this.printImageProvider.listBluetoothDevices().then(result => {
       this.printImageProvider.connect(result[1].address).then(result => {
-        this.printImageProvider.printText('Some text - Result');
         this.printImageProvider.printImage(imageBase, canvas.width, canvas.height, 0);
-        // .then(
-        //   () => { console.log('it works! printing image...') },
-        //   err => {console.log('error when  print: ' + JSON.stringify(err))}
-        // );
       });
     }).catch(err => {
       console.log(err);
@@ -113,38 +120,41 @@ export class HomePage {
 
   }
 
-  testPrinter()
+  testPrinter() {
+
+  }
+  printCoupon()
   {
       this.printSomething();
       // let html_string = "<html><head></head><body><p>HI</p></body></html>";
       // let iframe=document.createElement('iframe');
       // document.body.appendChild(iframe);
-      // let $self = this;
-      // setTimeout(function(){
-      //     // var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
-      //     // iframedoc.body.innerHTML=html_string;
-      //     var imagedata;
-      //     // html2canvas(html_string)
-      //     console.log(document.querySelector('#coupon-div'));
-      //     var source = document.querySelector('#coupon-div');
-      //     html2canvas(source)
-      //     .then(function(canvas) {
-      //       imagedata = canvas.toDataURL('image/png');
-      //       var myImage = new Image();
-      //       myImage.src = imagedata;
-      //       myImage.onload = function () {
-      //         var canvas = document.createElement("canvas");
-      //         canvas.height = 300;
-      //         canvas.width = 382;
-      //         var context = canvas.getContext('2d');
-      //         context.drawImage(myImage, 0, 0);
-      //         var imageBase =
-      //         canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
-      //         $self.printImage(imageBase, canvas);
-      //       };
-      //     })
-      //     .catch((error) => {alert('erro no html2canvas: ' + error)});
-      // }, 10);
+      let $self = this;
+      setTimeout(function(){
+          // var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
+          // iframedoc.body.innerHTML=html_string;
+          var imagedata;
+          // html2canvas(html_string)
+          console.log(document.querySelector('#coupon-div'));
+          var source = document.querySelector('#coupon-div');
+          html2canvas(source)
+          .then(function(canvas) {
+            imagedata = canvas.toDataURL('image/png');
+            var myImage = new Image();
+            myImage.src = imagedata;
+            myImage.onload = function () {
+              var canvas = document.createElement("canvas");
+              canvas.height = 300;
+              canvas.width = 382;
+              var context = canvas.getContext('2d');
+              context.drawImage(myImage, 0, 0);
+              var imageBase =
+              canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
+              $self.printImage(imageBase, canvas);
+            };
+          })
+          .catch((error) => {alert('erro no html2canvas: ' + error)});
+      }, 10);
   }
 
   public setName(browser) {
@@ -157,10 +167,10 @@ export class HomePage {
         if ( name ) {
           $self.printSomething();
           browser.executeScript({ code: "window.localStorage.setItem('name', '')"});
-          browser.executeScript({ code: "document.getElementsByClassName('printable')[0].innerHTML"})
-          .then(response => {
-            console.log(response);
-          });
+          // browser.executeScript({ code: "document.getElementsByClassName('printable')[0].innerHTML"})
+          // .then(response => {
+          //   console.log(response);
+          // });
           clearInterval( loop );
           $self.setName(browser);
         }
