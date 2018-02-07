@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { NavController,ModalController,AlertController } from 'ionic-angular';
+import { NavController,ModalController,AlertController,Platform } from 'ionic-angular';
 import {PrintProvider} from '../../providers/print/print';
 import {PrintImageProvider} from '../../providers/print/print_image';
 import {PrinterListModalPage} from '../printer-list-modal/printer-list-modal';
-import * as html2canvas from 'html2canvas';
+// import { InAppBrowser } from 'ionic-native';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+
 
 
 @Component({
@@ -15,12 +17,42 @@ export class HomePage {
 
   constructor(public navCtrl: NavController,private modalCtrl:ModalController,
     private printImageProvider: PrintImageProvider,
-    private alertCtrl:AlertController) {
+    private alertCtrl:AlertController, private platform:Platform) {
+  }
+
+  openUrl() {
+    this.platform.ready().then(() => {
+      let iab = new InAppBrowser();
+      let url = "http://demo.lazarus.bet"
+      const browser = iab.create(url, "_blank", "location=no");
+      browser.on("loadstop").subscribe((event) => {
+
+          browser.executeScript({ code: "window.localStorage.setItem('name', '')"});
+          browser.executeScript({ code:
+            "$(document).on('click', 'a#sidebar-right-button', function(){window.localStorage.setItem('name','Print');})"
+          });
+          browser.executeScript({ code:
+          "$(document).on('click', 'a#print-button', function(){window.localStorage.setItem('name','Print');})"
+        }).then( data => {
+          console.log('loadstop');
+        });
+        browser.executeScript({ code:
+          "$('#sidebar-right-button').on('click', function(){window.localStorage.setItem('name','Hello')})"
+        }).then( data => {
+          console.log('loadstop');
+        });
+        this.setName(browser);
+
+      });
+
+    });
   }
 
   printSomething() {
     this.printImageProvider.listBluetoothDevices().then(result => {
       this.printImageProvider.connect(result[1].address).then(result => {
+        this.printImageProvider.printText('Some text - Result');
+        this.printImageProvider.printText('Some text - Result');
         this.printImageProvider.printText('Some text - Result');
         // this.printImageProvider.printText('Some text - Result').then(
         //   () => {console.log('it works')},
@@ -28,7 +60,7 @@ export class HomePage {
         // )
       });
     }).catch(err => {
-      console.log(err);
+      alert(err);
     });
   }
 
@@ -83,36 +115,59 @@ export class HomePage {
 
   testPrinter()
   {
-      // this.printSomething();
+      this.printSomething();
       // let html_string = "<html><head></head><body><p>HI</p></body></html>";
       // let iframe=document.createElement('iframe');
       // document.body.appendChild(iframe);
-      let $self = this;
-      setTimeout(function(){
-          // var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
-          // iframedoc.body.innerHTML=html_string;
-          var imagedata;
-          // html2canvas(html_string)
-          console.log(document.querySelector('#coupon-div'));
-          var source = document.querySelector('#coupon-div');
-          html2canvas(source)
-          .then(function(canvas) {
-            imagedata = canvas.toDataURL('image/png');
-            var myImage = new Image();
-            myImage.src = imagedata;
-            myImage.onload = function () {
-              var canvas = document.createElement("canvas");
-              canvas.height = 300;
-              canvas.width = 382;
-              var context = canvas.getContext('2d');
-              context.drawImage(myImage, 0, 0);
-              var imageBase =
-              canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
-              $self.printImage(imageBase, canvas);
-            };
-          })
-          .catch((error) => {alert('erro no html2canvas: ' + error)});
-      }, 10);
+      // let $self = this;
+      // setTimeout(function(){
+      //     // var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
+      //     // iframedoc.body.innerHTML=html_string;
+      //     var imagedata;
+      //     // html2canvas(html_string)
+      //     console.log(document.querySelector('#coupon-div'));
+      //     var source = document.querySelector('#coupon-div');
+      //     html2canvas(source)
+      //     .then(function(canvas) {
+      //       imagedata = canvas.toDataURL('image/png');
+      //       var myImage = new Image();
+      //       myImage.src = imagedata;
+      //       myImage.onload = function () {
+      //         var canvas = document.createElement("canvas");
+      //         canvas.height = 300;
+      //         canvas.width = 382;
+      //         var context = canvas.getContext('2d');
+      //         context.drawImage(myImage, 0, 0);
+      //         var imageBase =
+      //         canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
+      //         $self.printImage(imageBase, canvas);
+      //       };
+      //     })
+      //     .catch((error) => {alert('erro no html2canvas: ' + error)});
+      // }, 10);
   }
+
+  public setName(browser) {
+    var $self = this;
+    var loop = setInterval(function() {
+      browser.executeScript({
+        code: "localStorage.getItem( 'name' )"
+      }).then(function( values ) {
+        var name = values[ 0 ];
+        if ( name ) {
+          $self.printSomething();
+          browser.executeScript({ code: "window.localStorage.setItem('name', '')"});
+          browser.executeScript({ code: "document.getElementsByClassName('printable')[0].innerHTML"})
+          .then(response => {
+            console.log(response);
+          });
+          clearInterval( loop );
+          $self.setName(browser);
+        }
+      });
+    });
+
+  }
+
 
 }
