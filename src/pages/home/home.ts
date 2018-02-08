@@ -87,6 +87,9 @@ export class HomePage {
         var action = values[ 0 ];
         if ( action ) {
           if (action=="Print"){
+          browser.executeScript(
+            { code: "window.localStorage.setItem('action', '')" }
+          );
             $self.selectDevice(browser);
           }
           if (action=="Test") {
@@ -94,7 +97,7 @@ export class HomePage {
           }
         }
       });
-    });
+    }, 2000);
   }
 
   private selectDevice(browser){
@@ -109,13 +112,8 @@ export class HomePage {
       modal.onDidDismiss((data)=>{
         browser.show();
         $self.printImageProvider.connect(data.address).then(result => {
-          browser.executeScript(
-            { code: "window.localStorage.setItem('action', '')" }
-          );
           browser.executeScript({ code: "document.getElementsByClassName('printable')[0].innerHTML"})
           .then(response => {
-            // alert("Printing...");
-            // alert(response);
             let iframe=document.createElement('iframe');
             document.body.appendChild(iframe);
             var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
