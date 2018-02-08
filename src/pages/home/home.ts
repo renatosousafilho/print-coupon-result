@@ -73,7 +73,7 @@ export class HomePage {
             myImage.src = imagedata;
             myImage.onload = function () {
               var canvas = document.createElement("canvas");
-              canvas.height = 300;
+              canvas.height = 1000;
               canvas.width = 382;
               var context = canvas.getContext('2d');
               context.drawImage(myImage, 0, 0);
@@ -101,6 +101,10 @@ export class HomePage {
             document.body.appendChild(iframe);
             var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
             iframedoc.body.innerHTML=response;
+            var link=document.createElement('link');
+            link.href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
+            link.rel='stylesheet';
+            iframedoc.head.appendChild(link);
 
             $self.printCoupon(iframedoc);
           });
