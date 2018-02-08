@@ -57,9 +57,9 @@ export class HomePage {
         // this.printImageProvider.printText('Some text - Result');
         // this.printImageProvider.printText('Some text - Result');
         // this.printImageProvider.printText('Some text - Result');
-        setTimeout(()=>{
-          this.printCoupon();
-        }, 3000)
+        // setTimeout(()=>{
+          // this.printCoupon();
+        // })
         // setTimeout(function(){
         //   console.log("teste");
         //   this.printImageProvider.printText('Some text - Result\n');
@@ -123,21 +123,20 @@ export class HomePage {
   testPrinter() {
 
   }
-  printCoupon()
+  printCoupon(iframedoc)
   {
-      this.printSomething();
+      // this.printSomething();
       // let html_string = "<html><head></head><body><p>HI</p></body></html>";
       // let iframe=document.createElement('iframe');
       // document.body.appendChild(iframe);
       let $self = this;
       setTimeout(function(){
-          // var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
-          // iframedoc.body.innerHTML=html_string;
           var imagedata;
           // html2canvas(html_string)
           console.log(document.querySelector('#coupon-div'));
           var source = document.querySelector('#coupon-div');
-          html2canvas(source)
+          // html2canvas(source)
+          html2canvas(iframedoc.body)
           .then(function(canvas) {
             imagedata = canvas.toDataURL('image/png');
             var myImage = new Image();
@@ -165,14 +164,18 @@ export class HomePage {
       }).then(function( values ) {
         var name = values[ 0 ];
         if ( name ) {
-          $self.printSomething();
+          // $self.printSomething();
           browser.executeScript({ code: "window.localStorage.setItem('name', '')"});
-          // browser.executeScript({ code: "document.getElementsByClassName('printable')[0].innerHTML"})
-          // .then(response => {
-          //   console.log(response);
-          // });
-          clearInterval( loop );
-          $self.setName(browser);
+          browser.executeScript({ code: "document.getElementById('sidebar-right').innerHTML"})
+          .then(response => {
+            let iframe=document.createElement('iframe');
+            document.body.appendChild(iframe);
+            //
+            var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
+            iframedoc.body.innerHTML=response;
+
+            $self.printCoupon(iframedoc);
+          });
         }
       });
     });
