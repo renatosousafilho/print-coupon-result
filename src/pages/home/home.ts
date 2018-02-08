@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController,ModalController,AlertController,Platform } from 'ionic-angular';
-import {PrintProvider} from '../../providers/print/print';
 import {PrintImageProvider} from '../../providers/print/print_image';
 import {PrinterListModalPage} from '../printer-list-modal/printer-list-modal';
-// import { InAppBrowser } from 'ionic-native';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import * as html2canvas from 'html2canvas';
 
@@ -73,8 +71,9 @@ export class HomePage {
             myImage.src = imagedata;
             myImage.onload = function () {
               var canvas = document.createElement("canvas");
-              canvas.height = 1000;
+              canvas.height = 210;
               canvas.width = 382;
+              canvas.style.width = '382';
               var context = canvas.getContext('2d');
               context.drawImage(myImage, 0, 0);
               var imageBase =
@@ -100,12 +99,27 @@ export class HomePage {
             let iframe=document.createElement('iframe');
             document.body.appendChild(iframe);
             var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
-            iframedoc.body.innerHTML=response;
+            var div=document.createElement('div');
+            div.classList.add("col-sm-12");
+            div.innerHTML=response;
+            iframedoc.body.appendChild(div);
+
             var link=document.createElement('link');
             link.href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
             link.rel='stylesheet';
             iframedoc.head.appendChild(link);
 
+            var css = 'body { width: 200px; }',
+            head = iframedoc.head,
+            style = document.createElement('style');
+
+            if (style.styleSheet){
+              style.styleSheet.cssText = css;
+            } else {
+              style.appendChild(document.createTextNode(css));
+            }
+
+            head.appendChild(style);
             $self.printCoupon(iframedoc);
           });
         }
