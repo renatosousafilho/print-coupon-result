@@ -8,7 +8,6 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import {PrinterListModalPage} from '../pages/printer-list-modal/printer-list-modal';
 
-import { PrintProvider } from '../providers/print/print';
 import { PrintImageProvider } from '../providers/print/print_image';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 
@@ -33,7 +32,6 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
     BluetoothSerial,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    PrintProvider,
     PrintImageProvider
   ]
 })

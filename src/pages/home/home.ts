@@ -26,20 +26,14 @@ export class HomePage {
       let url = "http://demo.lazarus.bet"
       const browser = iab.create(url, "_blank", "location=no");
       browser.on("loadstop").subscribe((event) => {
-
-          browser.executeScript({ code: "window.localStorage.setItem('name', '')"});
-          // browser.executeScript({ code:
-          //   "$(document).on('click', 'a#sidebar-right-button', function(){window.localStorage.setItem('name','Print');})"
-          // });
-          browser.executeScript({ code:
-          "$(document).on('click', 'a#print-button', function(){window.localStorage.setItem('name','Print');})"
-        }).then( data => {
-          console.log('loadstop');
+        browser.executeScript(
+          { code: "window.localStorage.setItem('name', '')"}
+        );
+        browser.executeScript({ code:
+          "$(document).on('click', 'a#print-button', function(){window.localStorage.setItem('action','Print');})"
         });
         browser.executeScript({ code:
-          "$('#sidebar-right-button').on('click', function(){window.localStorage.setItem('name','Hello')})"
-        }).then( data => {
-          console.log('loadstop');
+          "$('#sidebar-right-button').on('click', function(){window.localStorage.setItem('action','Test')})"
         });
         this.setName(browser);
 
@@ -73,7 +67,6 @@ export class HomePage {
               var canvas = document.createElement("canvas");
               canvas.height = 210;
               canvas.width = 382;
-              canvas.style.width = '382';
               var context = canvas.getContext('2d');
               context.drawImage(myImage, 0, 0);
               var imageBase =
@@ -87,46 +80,66 @@ export class HomePage {
 
   public setName(browser) {
     var $self = this;
-    var loop = setInterval(function() {
+    setInterval(function() {
       browser.executeScript({
-        code: "localStorage.getItem( 'name' )"
-      }).then(function( values ) {
-        var name = values[ 0 ];
-        if ( name ) {
-          browser.executeScript({ code: "window.localStorage.setItem('name', '')"});
-          browser.executeScript({ code: "document.getElementsByClassName('printable')[0].innerHTML"})
-          .then(response => {
-            let iframe=document.createElement('iframe');
-            document.body.appendChild(iframe);
-            var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
-            var div=document.createElement('div');
-            div.classList.add("col-sm-12");
-            div.innerHTML=response;
-            iframedoc.body.appendChild(div);
+        code: "localStorage.getItem( 'action' )"
+      }).then(values => {
+        var action = values[ 0 ];
+        if ( action ) {
+          if (action=="Print"){
+            browser.executeScript(
+              { code: "window.localStorage.setItem('action', '')" }
+            );
+            browser.executeScript({ code: "document.getElementsByClassName('printable')[0].innerHTML"})
+            .then(response => {
+              // alert("Printing...");
+              // alert(response);
+              let iframe=document.createElement('iframe');
+              document.body.appendChild(iframe);
+              var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
+              var div=document.createElement('div');
+              div.classList.add("col-sm-12");
+              div.innerHTML=response;
+              iframedoc.body.appendChild(div);
 
-            var link=document.createElement('link');
-            link.href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
-            link.rel='stylesheet';
-            iframedoc.head.appendChild(link);
+              var link=document.createElement('link');
+              link.href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
+              link.rel='stylesheet';
+              iframedoc.head.appendChild(link);
 
-            var css = 'body { width: 200px; }',
-            head = iframedoc.head,
-            style = document.createElement('style');
+              var css = 'body { width: 200px; }',
+              head = iframedoc.head,
+              style = document.createElement('style');
 
-            if (style.styleSheet){
-              style.styleSheet.cssText = css;
-            } else {
               style.appendChild(document.createTextNode(css));
-            }
 
-            head.appendChild(style);
-            $self.printCoupon(iframedoc);
-          });
+              head.appendChild(style);
+              // $self.printCoupon(iframedoc);
+            });
+          }
+          if (action=="Test") {
+            browser.executeScript(
+              { code: "window.localStorage.setItem('action', '')" }
+            );
+            $self.printImageProvider.listBluetoothDevices().then(datalist => {
+              browser.hide();
+              let modal=$self.modalCtrl.create(PrinterListModalPage,{data:datalist});
+              modal.present();
+              modal.onDidDismiss((data)=>{
+                browser.show();
+                $self.printImageProvider.connect(data.address).then(result => {
+                  $self.printImageProvider.printText("Hello");
+                  $self.printImageProvider.printText("Hello");
+                  $self.printImageProvider.printText("Hello");
+                });
+              });
+            });
+          }
         }
       });
     });
-
   }
+
 
 
 }
