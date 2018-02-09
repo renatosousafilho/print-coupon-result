@@ -26,6 +26,16 @@ export class PrintImageProvider {
        });
   }
 
+  public disconnect(){
+    return new Promise((resolve, reject) => {
+      DatecsPrinter.disconnect( function (success) {
+        resolve(success);
+      }, function (error) {
+        reject(error);
+      });
+    });
+  }
+
   public printText(text, charset = 'UTF-8'){
     // ISO-8859-1
     return new Promise((resolve, reject) => {

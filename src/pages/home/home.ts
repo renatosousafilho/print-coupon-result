@@ -32,11 +32,7 @@ export class HomePage {
         browser.executeScript({ code:
           "$(document).on('click', 'a#print-button', function(){window.localStorage.setItem('action','Print');})"
         });
-        browser.executeScript({ code:
-          "$('#sidebar-right-button').on('click', function(){window.localStorage.setItem('action','Test')})"
-        });
         this.setName(browser);
-
       });
 
     });
@@ -118,8 +114,9 @@ export class HomePage {
             document.body.appendChild(iframe);
             var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
             var div=document.createElement('div');
-            div.classList.add("col-sm-12");
+            // div.classList.add("col-sm-12");
             div.innerHTML=response;
+            div.id = "print-div";
             iframedoc.body.appendChild(div);
 
             var link=document.createElement('link');
@@ -127,7 +124,17 @@ export class HomePage {
             link.rel='stylesheet';
             iframedoc.head.appendChild(link);
 
-            var css = 'body { width: 200px; }',
+
+            var css = `
+              body {
+                width: 365px;
+              }
+              .dashed-border-bottom {
+                border-bottom: 5px dashed #000;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+              }
+            `,
             head = iframedoc.head,
             style = document.createElement('style');
 
@@ -144,19 +151,19 @@ export class HomePage {
                   myImage.src = imagedata;
                   myImage.onload = function () {
                     var canvas = document.createElement("canvas");
-                    canvas.height = 210;
-                    canvas.width = 382;
+                    canvas.width = 381;
+                    canvas.height = iframedoc.body.scrollHeight;
                     var context = canvas.getContext('2d');
                     context.drawImage(myImage, 0, 0);
                     var imageBase =
                     canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
-                    $self.printImageProvider.connect(data.address).then(result => {
-                      $self.printImageProvider.printImage(imageBase, canvas.width, canvas.height, 0);
+                    $self.printImageProvider.printImage(imageBase, canvas.width, canvas.height, 0).then((result)=>{
+                      $self.printImageProvider.disconnect();
                     });
                   };
                 })
                 .catch((error) => {alert('erro no html2canvas: ' + error)});
-            }, 10);
+            }, 1000);
           });
         });
       });
