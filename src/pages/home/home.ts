@@ -88,13 +88,9 @@ export class HomePage {
 
             var css = `
               body {
-                width: 365px;
+                width: 320px;
                 padding-right: 15px;
-              }
-              .dashed-border-bottom {
-                border-bottom: 5px dashed #000;
-                padding-bottom: 10px;
-                margin-bottom: 10px;
+                height: 100%;
               }
             `,
             head = iframedoc.head,
@@ -111,17 +107,21 @@ export class HomePage {
                   myImage.src = imagedata;
                   myImage.onload = function () {
                     var canvas = document.createElement("canvas");
-                    canvas.width = 365;
+                    canvas.width = 320;
                     var body = iframedoc.body;
                     var html = iframedoc.documentElement;
                     var height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
-                    // canvas.height = myImage.height;
-                    canvas.height = height + 260;
-                    // canvas.style.height = height + "px";
+                    canvas.height = height+300;
+                    canvas.style.height = "";
                     var context = canvas.getContext('2d');
                     context.drawImage(myImage, 0, 0);
                     var imageBase =
                     canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
+
+                    // document.querySelector("ion-content").appendChild(canvas);
+                    // browser.hide();
+
+                    // $self.printImageProvider.disconnect();
 
                     $self.printImageProvider.printImage(imageBase, canvas.width, canvas.height, 0).then((result)=>{
                       $self.printImageProvider.disconnect();
