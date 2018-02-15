@@ -92,6 +92,10 @@ export class HomePage {
                 padding-right: 15px;
                 height: 100%;
               }
+
+              .dashed-border-bottom {
+                border-bottom: 5px dashed #000;
+              }
             `,
             head = iframedoc.head,
             style = document.createElement('style');
