@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController,ModalController,AlertController,Platform } from 'ionic-angular';
+import { NavController,ModalController,Platform } from 'ionic-angular';
 import {PrintImageProvider} from '../../providers/print/print_image';
 import {PrinterListModalPage} from '../printer-list-modal/printer-list-modal';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
@@ -14,16 +14,18 @@ import * as html2canvas from 'html2canvas';
 export class HomePage {
   selectedPrinter:any=[];
 
-  constructor(public navCtrl: NavController,private modalCtrl:ModalController,
+  constructor(
+    public navCtrl: NavController,
+    private modalCtrl:ModalController,
     private printImageProvider: PrintImageProvider,
-    private alertCtrl:AlertController, private platform:Platform) {
+    private platform:Platform) {
       this.openUrl();
   }
 
   openUrl() {
     this.platform.ready().then(() => {
       let iab = new InAppBrowser();
-      let url = "http://demo.lazarus.bet"
+      let url = "http://demo.lazarus.bet";
       const browser = iab.create(url, "_blank", "location=no");
       browser.on("loadstop").subscribe((event) => {
         browser.executeScript(
@@ -38,42 +40,6 @@ export class HomePage {
     });
   }
 
-
-  printImage(imageBase, canvas) {
-    this.printImageProvider.listBluetoothDevices().then(result => {
-      this.printImageProvider.connect(result[1].address).then(result => {
-        this.printImageProvider.printImage(imageBase, canvas.width, canvas.height, 0);
-      });
-    }).catch(err => {
-      console.log(err);
-    });
-  }
-
-  public printCoupon(iframedoc)
-  {
-      let $self = this;
-      setTimeout(function(){
-          var imagedata;
-          html2canvas(iframedoc.body)
-          .then(function(canvas) {
-            imagedata = canvas.toDataURL('image/png');
-            var myImage = new Image();
-            myImage.src = imagedata;
-            myImage.onload = function () {
-              var canvas = document.createElement("canvas");
-              canvas.height = 210;
-              canvas.width = 382;
-              var context = canvas.getContext('2d');
-              context.drawImage(myImage, 0, 0);
-              var imageBase =
-              canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
-              $self.printImage(imageBase, canvas);
-            };
-          })
-          .catch((error) => {alert('erro no html2canvas: ' + error)});
-      }, 10);
-  }
-
   public setName(browser) {
     var $self = this;
     setInterval(function() {
@@ -86,9 +52,6 @@ export class HomePage {
           browser.executeScript(
             { code: "window.localStorage.setItem('action', '')" }
           );
-            $self.selectDevice(browser);
-          }
-          if (action=="Test") {
             $self.selectDevice(browser);
           }
         }
@@ -114,9 +77,8 @@ export class HomePage {
             document.body.appendChild(iframe);
             var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
             var div=document.createElement('div');
-            // div.classList.add("col-sm-12");
+            div.classList.add("col-sm-12");
             div.innerHTML=response;
-            div.id = "print-div";
             iframedoc.body.appendChild(div);
 
             var link=document.createElement('link');
@@ -124,10 +86,10 @@ export class HomePage {
             link.rel='stylesheet';
             iframedoc.head.appendChild(link);
 
-
             var css = `
               body {
                 width: 365px;
+                padding-right: 15px;
               }
               .dashed-border-bottom {
                 border-bottom: 5px dashed #000;
@@ -137,9 +99,7 @@ export class HomePage {
             `,
             head = iframedoc.head,
             style = document.createElement('style');
-
             style.appendChild(document.createTextNode(css));
-
             head.appendChild(style);
 
             setTimeout(function(){
@@ -151,12 +111,18 @@ export class HomePage {
                   myImage.src = imagedata;
                   myImage.onload = function () {
                     var canvas = document.createElement("canvas");
-                    canvas.width = 381;
-                    canvas.height = iframedoc.body.scrollHeight;
+                    canvas.width = 365;
+                    var body = iframedoc.body;
+                    var html = iframedoc.documentElement;
+                    var height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
+                    // canvas.height = myImage.height;
+                    canvas.height = height + 260;
+                    // canvas.style.height = height + "px";
                     var context = canvas.getContext('2d');
                     context.drawImage(myImage, 0, 0);
                     var imageBase =
                     canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
+
                     $self.printImageProvider.printImage(imageBase, canvas.width, canvas.height, 0).then((result)=>{
                       $self.printImageProvider.disconnect();
                     });
@@ -169,7 +135,6 @@ export class HomePage {
       });
     });
   }
-
 
 
 }

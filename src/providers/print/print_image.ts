@@ -48,7 +48,6 @@ export class PrintImageProvider {
   }
 
   public printImage(image, width, height, align){
-    console.log(image);
     return new Promise((resolve, reject) => {
       DatecsPrinter.printImage( image, width, height, align, function (success) {
         resolve(success);
