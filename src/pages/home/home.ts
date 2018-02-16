@@ -77,7 +77,7 @@ export class HomePage {
             document.body.appendChild(iframe);
             var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
             var div=document.createElement('div');
-            //div.classList.add("col-sm-12");
+            div.classList.add("col-sm-12");
             div.innerHTML=response;
             iframedoc.body.appendChild(div);
 
@@ -90,7 +90,7 @@ export class HomePage {
               body {
                 width: 100%;
                 height: 100%;
-                font-size: 11px;
+                font-size: 8px important!;
               }
 
               .dashed-border-bottom {
@@ -112,35 +112,46 @@ export class HomePage {
                   var myImage = new Image();
                   myImage.src = imagedata;
                   myImage.onload = function () {
-                    var canvas = document.createElement("canvas");
+                    var tmpCanvas = document.createElement("canvas");
+
                     var dpr = window.devicePixelRatio;
-                    canvas.width = 600*dpr;
+                    tmpCanvas.width = 600*dpr;
                     var width = 640 / dpr;
-                    canvas.style.width = width + "px";
-                    // canvas.style.border = "3px #000000 solid";
-                    // canvas.style.padding = "0px 5mm 0px 5mm";
+
                     var body = iframedoc.body;
                     var html = iframedoc.documentElement;
-                    var height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
-                    canvas.height = 1000;
-                    // canvas.style.height = "";
-                    // canvas.style.padding = "5px";
-                    var context = canvas.getContext('2d');
-                    if (dpr==1) {
-                      context.drawImage(myImage, 0, 0);
-                    } else if (dpr==2) {
-                      context.drawImage(myImage, 0, 0, width, height);
-                      // context.scale(0.5, 0.5);
-                    }
-                    var imageBase = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
+                    var height = Math.max( body.scrollHeight, body.offsetHeight,  html.clientHeight, html.scrollHeight, html.offsetHeight );
+                    tmpCanvas.height = height;
 
-                    document.querySelector("ion-content").appendChild(canvas);
+                    var tmpContext = tmpCanvas.getContext('2d');
+                    if (dpr==1) {
+                      tmpContext.drawImage(myImage, 0, 0);
+                    } else if (dpr==2) {
+                      tmpContext.drawImage(myImage, 0, 0, width, height);
+                    }
+
+
+                    var finalCanvas = document.createElement("canvas");
+                    finalCanvas.width = 300;
+                    if (dpr==1) {
+                      finalCanvas.height = height + 280;
+                    } else if (dpr==2) {
+                      finalCanvas.height = height + 30;
+                    }
+
+                    var context = finalCanvas.getContext('2d');
+                    context.drawImage(tmpCanvas, 0, 0);
+
+                    var imageBase = finalCanvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
+
+                    var content = document.querySelector("ion-content")
+                    content.appendChild(finalCanvas);
                     browser.hide();
 
                     // $self.printImageProvider.disconnect();
 
                     var widthPrint = 300;
-                    $self.printImageProvider.printImage(imageBase, widthPrint, 100, 1).then((result)=>{
+                    $self.printImageProvider.printImage(imageBase, widthPrint, finalCanvas.height, 1).then((result)=>{
                       $self.printImageProvider.disconnect();
                     });
                   };
