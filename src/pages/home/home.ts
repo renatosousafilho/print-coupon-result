@@ -116,7 +116,7 @@ export class HomePage {
 
                     var dpr = window.devicePixelRatio;
                     tmpCanvas.width = 600*dpr;
-                    var width = 640 / dpr;
+                    var width = 720 / dpr;
 
                     var body = iframedoc.body;
                     var html = iframedoc.documentElement;
@@ -132,10 +132,13 @@ export class HomePage {
 
 
                     var finalCanvas = document.createElement("canvas");
-                    finalCanvas.width = 300;
                     if (dpr==1) {
+                      var widthPrint = 300;
+                      finalCanvas.width = 300;
                       finalCanvas.height = height + 280;
                     } else if (dpr==2) {
+                      finalCanvas.width = 360;
+                      var widthPrint = 360;
                       finalCanvas.height = height + 30;
                     }
 
@@ -144,13 +147,6 @@ export class HomePage {
 
                     var imageBase = finalCanvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
 
-                    var content = document.querySelector("ion-content")
-                    content.appendChild(finalCanvas);
-                    browser.hide();
-
-                    // $self.printImageProvider.disconnect();
-
-                    var widthPrint = 300;
                     $self.printImageProvider.printImage(imageBase, widthPrint, finalCanvas.height, 1).then((result)=>{
                       $self.printImageProvider.disconnect();
                     });
