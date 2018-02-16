@@ -77,7 +77,7 @@ export class HomePage {
             document.body.appendChild(iframe);
             var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
             var div=document.createElement('div');
-            div.classList.add("col-sm-12");
+            //div.classList.add("col-sm-12");
             div.innerHTML=response;
             iframedoc.body.appendChild(div);
 
@@ -88,14 +88,16 @@ export class HomePage {
 
             var css = `
               body {
-                width: 320px;
-                padding-right: 15px;
+                width: 100%;
                 height: 100%;
+                font-size: 11px;
               }
 
               .dashed-border-bottom {
                 border-bottom: 5px dashed #000;
               }
+
+
             `,
             head = iframedoc.head,
             style = document.createElement('style');
@@ -111,23 +113,34 @@ export class HomePage {
                   myImage.src = imagedata;
                   myImage.onload = function () {
                     var canvas = document.createElement("canvas");
-                    canvas.width = 320;
+                    var dpr = window.devicePixelRatio;
+                    canvas.width = 600*dpr;
+                    var width = 640 / dpr;
+                    canvas.style.width = width + "px";
+                    // canvas.style.border = "3px #000000 solid";
+                    // canvas.style.padding = "0px 5mm 0px 5mm";
                     var body = iframedoc.body;
                     var html = iframedoc.documentElement;
                     var height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
-                    canvas.height = height+300;
-                    canvas.style.height = "";
+                    canvas.height = 1000;
+                    // canvas.style.height = "";
+                    // canvas.style.padding = "5px";
                     var context = canvas.getContext('2d');
-                    context.drawImage(myImage, 0, 0);
-                    var imageBase =
-                    canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
+                    if (dpr==1) {
+                      context.drawImage(myImage, 0, 0);
+                    } else if (dpr==2) {
+                      context.drawImage(myImage, 0, 0, width, height);
+                      // context.scale(0.5, 0.5);
+                    }
+                    var imageBase = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
 
-                    // document.querySelector("ion-content").appendChild(canvas);
-                    // browser.hide();
+                    document.querySelector("ion-content").appendChild(canvas);
+                    browser.hide();
 
                     // $self.printImageProvider.disconnect();
 
-                    $self.printImageProvider.printImage(imageBase, canvas.width, canvas.height, 0).then((result)=>{
+                    var widthPrint = 300;
+                    $self.printImageProvider.printImage(imageBase, widthPrint, 100, 1).then((result)=>{
                       $self.printImageProvider.disconnect();
                     });
                   };
