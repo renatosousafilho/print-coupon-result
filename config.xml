@@ -3,7 +3,7 @@
     <name>ionicBTprinter</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
-    <content original-src="index.html" src="http://192.168.15.3:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -86,4 +86,8 @@
     <allow-navigation href="http://192.168.15.3:8100" />
     <plugin name="cordova-plugin-inappbrowser" spec="~2.0.2" />
     <engine name="android" spec="6.4.0" />
+    <plugin name="cordova-android-support-gradle-release" spec="^1.4.2">
+        <variable name="ANDROID_SUPPORT_VERSION" value="27.+" />
+    </plugin>
+    <allow-navigation href="http://192.168.0.18:8100" />
 </widget>

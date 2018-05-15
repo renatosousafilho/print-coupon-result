@@ -25,7 +25,7 @@ export class HomePage {
   openUrl() {
     this.platform.ready().then(() => {
       let iab = new InAppBrowser();
-      let url = "http://demo.lazarus.bet";
+      let url = "http://demo.result.bet";
       const browser = iab.create(url, "_blank", "location=no");
       browser.on("loadstop").subscribe((event) => {
         browser.executeScript(
