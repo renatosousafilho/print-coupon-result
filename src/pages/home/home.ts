@@ -90,14 +90,20 @@ export class HomePage {
               body {
                 width: 100%;
                 height: 100%;
-                font-size: 8px important!;
+                font-size: 11px important!;
+              }
+
+              .dashed-border-top {
+                border-top: 5px dashed #000;
+                padding-top: 10px;
+                margin-top: 10px;
               }
 
               .dashed-border-bottom {
                 border-bottom: 5px dashed #000;
               }
 
-
+              .mb-0 { margin-bottom:0 !important; }
             `,
             head = iframedoc.head,
             style = document.createElement('style');
