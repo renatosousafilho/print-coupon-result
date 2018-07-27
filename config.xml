@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="io.btserialprinter.starter" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>ionicBTprinter</name>
-    <description>An awesome Ionic/Cordova app.</description>
+    <name>Nacional Bet</name>
+    <description>Seu site de apostas.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
     <content src="index.html" />
     <access origin="*" />
@@ -85,9 +85,9 @@
     <plugin name="cordova-plugin-datecs-printer" spec="^0.8.2" />
     <allow-navigation href="http://192.168.15.3:8100" />
     <plugin name="cordova-plugin-inappbrowser" spec="~2.0.2" />
-    <engine name="android" spec="6.4.0" />
     <plugin name="cordova-android-support-gradle-release" spec="^1.4.2">
         <variable name="ANDROID_SUPPORT_VERSION" value="27.+" />
     </plugin>
     <allow-navigation href="http://192.168.0.18:8100" />
+    <engine name="android" spec="6.4.0" />
 </widget>
