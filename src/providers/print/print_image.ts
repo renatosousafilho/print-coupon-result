@@ -57,4 +57,15 @@ export class PrintImageProvider {
     });
   }
 
+  public write(bytes){
+    return new Promise((resolve, reject) => {
+      console.log("write");
+      DatecsPrinter.write(bytes, function (success) {
+        resolve(success);
+      }, function (error) {
+        reject(error);
+      });
+    });
+  }
+
 }

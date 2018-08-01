@@ -26,6 +26,7 @@ export class HomePage {
     this.platform.ready().then(() => {
       let iab = new InAppBrowser();
       // let url = "http://demo.result.bet";
+      // let url = "http://192.168.15.3:3000";
       let url = "http://nacional.bet";
       const browser = iab.create(url, "_blank", "location=no");
       browser.on("loadstop").subscribe((event) => {
@@ -60,111 +61,44 @@ export class HomePage {
     }, 2000);
   }
 
+  private pad(string1, string2, size) {
+    var finalString = string1;
+    var paddingSize = size - string1.length - string2.length;
+    finalString += ' '.repeat(paddingSize) + string2;
+    return finalString;
+  }
+
   private selectDevice(browser){
     var $self = this;
     browser.executeScript(
       { code: "window.localStorage.setItem('action', '')" }
     );
-    $self.printImageProvider.listBluetoothDevices().then(datalist => {
-      browser.hide();
-      let modal=$self.modalCtrl.create(PrinterListModalPage,{data:datalist});
-      modal.present();
-      modal.onDidDismiss((data)=>{
-        browser.show();
-        $self.printImageProvider.connect(data.address).then(result => {
-          browser.executeScript({ code: "document.getElementsByClassName('printable')[0].innerHTML"})
-          .then(response => {
-            let iframe=document.createElement('iframe');
-            document.body.appendChild(iframe);
-            var iframedoc=iframe.contentDocument||iframe.contentWindow.document;
-            var div=document.createElement('div');
-            div.classList.add("col-sm-12");
-            div.innerHTML=response;
-            iframedoc.body.appendChild(div);
-
-            var link=document.createElement('link');
-            link.href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css';
-            link.rel='stylesheet';
-            iframedoc.head.appendChild(link);
-
-            var css = `
-              body {
-                width: 100%;
-                height: 100%;
-                font-size: 11px important!;
-              }
-
-              .dashed-border-top {
-                border-top: 5px dashed #000;
-                padding-top: 10px;
-                margin-top: 10px;
-              }
-
-              .dashed-border-bottom {
-                border-bottom: 5px dashed #000;
-              }
-
-              .mb-0 { margin-bottom:0 !important; }
-            `,
-            head = iframedoc.head,
-            style = document.createElement('style');
-            style.appendChild(document.createTextNode(css));
-            head.appendChild(style);
-
-            setTimeout(function(){
-                var imagedata;
-                html2canvas(iframedoc.body)
-                .then(function(canvas) {
-                  imagedata = canvas.toDataURL('image/png');
-                  var myImage = new Image();
-                  myImage.src = imagedata;
-                  myImage.onload = function () {
-                    var tmpCanvas = document.createElement("canvas");
-
-                    var dpr = window.devicePixelRatio;
-                    tmpCanvas.width = 600*dpr;
-                    var width = 720 / dpr;
-
-                    var body = iframedoc.body;
-                    var html = iframedoc.documentElement;
-                    var height = Math.max( body.scrollHeight, body.offsetHeight,  html.clientHeight, html.scrollHeight, html.offsetHeight );
-                    tmpCanvas.height = height;
-
-                    var tmpContext = tmpCanvas.getContext('2d');
-                    if (dpr==1) {
-                      tmpContext.drawImage(myImage, 0, 0);
-                    } else if (dpr==2) {
-                      tmpContext.drawImage(myImage, 0, 0, width, height);
-                    }
-
-
-                    var finalCanvas = document.createElement("canvas");
-                    if (dpr==1) {
-                      var widthPrint = 300;
-                      finalCanvas.width = 300;
-                      finalCanvas.height = height + 280;
-                    } else if (dpr==2) {
-                      finalCanvas.width = 360;
-                      var widthPrint = 360;
-                      finalCanvas.height = height + 30;
-                    }
-
-                    var context = finalCanvas.getContext('2d');
-                    context.drawImage(tmpCanvas, 0, 0);
-
-                    var imageBase = finalCanvas.toDataURL('image/png').replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
-
-                    $self.printImageProvider.printImage(imageBase, widthPrint, finalCanvas.height, 1).then((result)=>{
-                      $self.printImageProvider.disconnect();
-                    });
-                  };
-                })
-                .catch((error) => {alert('erro no html2canvas: ' + error)});
-            }, 1000);
+    $self.printImageProvider.listBluetoothDevices().then(
+      datalist => {
+        browser.hide();
+        let modal=$self.modalCtrl.create(PrinterListModalPage,{data:datalist});
+        modal.present();
+        modal.onDidDismiss((data)=>{
+          browser.show();
+          $self.printImageProvider.connect(data.address).then(
+            result => {
+              browser.executeScript({ code: "document.getElementsByClassName('print-mobile')[0].innerHTML"})
+                .then(response => {
+                  var content = response[0]
+                  content = content.replace('/\//','//')
+                  $self.printImageProvider.printText(content, 'ISO-8859-1');
+                });
+            },
+            error => {
+              console.log(JSON.stringify(error));
+              alert(error["message"]);
+            });
           });
-        });
-      });
-    });
+      },
+      error => {
+        alert(JSON.stringify(error));
+      }
+    );
   }
 
 
