@@ -1,41 +1,24 @@
-# What is this?
--This is an ionic 2+ app
+# alterar a URL no arquivo home.ts
 
 
+# Gerar chave privada
 
-# What can this app do?
--Print on mini bluetooth printer with ionic 2+ app.
+keytool -genkey -v -keystore my-release-key.keystore -alias alias_name -keyalg RSA -keysize 2048 -validity 10000
 
--Last check, I was able to print on a lot of the standard bluetooth receipt printer
+# Alterar config.xml
+widget.id, name e description
 
--Works on both ios and android.
+# Personalizar o ícone e a splash page
+gerar as novas imagens nas respectivas resoluções (icon: 1024x1024, splash: 2732x2732)
+ionic cordova resources android --force
 
--Does not work on ionic serve, you have to compile the app and run it on a device
+# Build do apk
 
--Example: For pos system, for parking summons. 
+ionic cordova build --release android
 
+# Assinar o apk
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore HelloWorld-release-unsigned.apk alias_name
 
+# Otimizar o apk
 
-# How to start?
-1. Install Ionic and npm
-
-2. Install ionic native bt serial. See this link:
-https://ionicframework.com/docs/native/bluetooth-serial/
-
-3. All the stuff are in the home.ts and in the providers/print/print.ts files 
-
--The files are quite self explanatory, but if you need any help, hit me up on twitter @razmans
-
-
-
-# Future TO DO
--Print bit based data
-
--Print bitmap images
-
-
-
-# Contributions
-Bitcoin: 1Bd2e8NjjGMTzULcFLQgQVFpAvUu15FJUC
-
-Paypal: http://paypal.me/razmansarit
+zipalign -v 4 HelloWorld-release-unsigned.apk HelloWorld.apk

@@ -25,9 +25,7 @@ export class HomePage {
   openUrl() {
     this.platform.ready().then(() => {
       let iab = new InAppBrowser();
-      // let url = "http://demo.result.bet";
-      // let url = "http://192.168.15.3:3000";
-      let url = "http://nacional.bet";
+      let url = "http://55odds.net";
       const browser = iab.create(url, "_blank", "location=no");
       browser.on("loadstop").subscribe((event) => {
         browser.executeScript(
