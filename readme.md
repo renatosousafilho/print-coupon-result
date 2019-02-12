@@ -1,3 +1,11 @@
+# setup
+https://github.com/dpa99c/cordova-android-support-gradle-release
+
+cordova plugin rm cordova-android-support-gradle-release
+cordova plugin add cordova-android-support-gradle-release --variable ANDROID_SUPPORT_VERSION=23.+
+cordova prepare && cordova compile
+
+
 # alterar a URL no arquivo home.ts
 
 

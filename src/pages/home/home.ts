@@ -3,9 +3,7 @@ import { NavController,ModalController,Platform } from 'ionic-angular';
 import {PrintImageProvider} from '../../providers/print/print_image';
 import {PrinterListModalPage} from '../printer-list-modal/printer-list-modal';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
-import * as html2canvas from 'html2canvas';
-
-
+import { APP_URL } from './constants'
 
 @Component({
   selector: 'page-home',
@@ -25,8 +23,7 @@ export class HomePage {
   openUrl() {
     this.platform.ready().then(() => {
       let iab = new InAppBrowser();
-      let url = "http://55odds.net";
-      const browser = iab.create(url, "_blank", "location=no");
+      const browser = iab.create(APP_URL, "_blank", "location=no");
       browser.on("loadstop").subscribe((event) => {
         browser.executeScript(
           { code: "window.localStorage.setItem('name', '')"}
@@ -57,13 +54,6 @@ export class HomePage {
         }
       });
     }, 2000);
-  }
-
-  private pad(string1, string2, size) {
-    var finalString = string1;
-    var paddingSize = size - string1.length - string2.length;
-    finalString += ' '.repeat(paddingSize) + string2;
-    return finalString;
   }
 
   private selectDevice(browser){

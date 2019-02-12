@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="net.result.cliente55odds" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>55odds.net</name>
+<widget id="bet.result.demo01" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Demo.result.bet</name>
     <description>Seu site de apostas.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
     <content src="index.html" />
@@ -89,7 +89,7 @@
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
     <plugin name="cordova-plugin-datecs-printer" spec="^0.8.2" />
     <plugin name="cordova-plugin-inappbrowser" spec="~2.0.2" />
-    <plugin name="cordova-android-support-gradle-release" spec="^1.4.2">
-        <variable name="ANDROID_SUPPORT_VERSION" value="27.+" />
+    <plugin name="cordova-android-support-gradle-release" spec="^2.0.1">
+        <variable name="ANDROID_SUPPORT_VERSION" value="23.+" />
     </plugin>
 </widget>
