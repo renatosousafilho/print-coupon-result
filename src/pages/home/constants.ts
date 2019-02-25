@@ -1,1 +1,1 @@
-export const APP_URL = "http://jkbets.com.br";
+export const APP_URL = "http://betsport63.com.br";
